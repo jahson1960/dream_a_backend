@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payments API Tester</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f6f9;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .box {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    input, select, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    pre {
+      background: #000;
+      color: #0f0;
+      padding: 10px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    th {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Payments API Tester</h2>
+
+<div class="box">
+  <label>API Key</label>
+  <input type="text" id="apiKey" value="whyehyehhrjk" />
+</div>
+
+<div class="box">
+  <label>Select API</label>
+  <select id="apiSelector" onchange="renderFields()">
+    <option value="">-- Select API --</option>
+    <option value="clientTransactions">List Client Transactions</option>
+    <option value="clientTotal">Client Total Deposits</option>
+    <option value="allTransactions">List All Transactions</option>
+    <option value="cumulative">Cumulative Deposits</option>
+    <option value="cumulativeRange">Cumulative Deposits (Date Range)</option>
+    <option value="byReference">Transaction By Reference</option>
+  </select>
+
+  <div id="dynamicFields"></div>
+
+  <button onclick="callAPI()">Run API</button>
+  <button onclick="clearOutput()">CLEAR OUTPUT</button>
+
+</div>
+
+<div class="box">
+  <h3>Raw JSON Response</h3>
+  <pre id="jsonOutput"></pre>
+</div>
+
+<div class="box">
+  <h3>Table View</h3>
+  <div id="tableOutput"></div>
+</div>
+
+<script>
+const BASE_URL = "http://localhost:3000/payments";
+
+function renderFields() {
+  const type = document.getElementById("apiSelector").value;
+  const container = document.getElementById("dynamicFields");
+
+  let html = "";
+
+  if (type === "clientTransactions") {
+    html = `
+      <input id="account_number" placeholder="Account Number" />
+      <input id="start_date" placeholder="Start Date (YYYY-MM-DD)" />
+      <input id="end_date" placeholder="End Date (YYYY-MM-DD)" />
+    `;
+  }
+
+  if (type === "clientTotal") {
+    html = `<input id="account_number" placeholder="Account Number" />`;
+  }
+
+  if (type === "allTransactions") {
+    html = `
+      <input id="start_date" placeholder="Start Date" />
+      <input id="end_date" placeholder="End Date" />
+    `;
+  }
+
+  if (type === "cumulativeRange") {
+    html = `
+      <input id="start_date" placeholder="Start Date" />
+      <input id="end_date" placeholder="End Date" />
+    `;
+  }
+
+  if (type === "byReference") {
+    html = `<input id="reference" placeholder="Reference" />`;
+  }
+
+  container.innerHTML = html;
+}
+
+async function callAPI() {
+  const apiKey = 'POLL';//document.getElementById("apiKey").value;
+  const type = document.getElementById("apiSelector").value;
+
+  let url = "";
+  let body = {};
+
+  if (!apiKey) {
+    alert("API Key required");
+    return;
+  }
+
+  switch(type) {
+    case "clientTransactions":
+      url = "/transactions/client";
+      body = {
+        account_number: val("account_number"),
+        start_date: val("start_date"),
+        end_date: val("end_date")
+      };
+      break;
+
+    case "clientTotal":
+      url = "/transactions/client-total";
+      body = { account_number: val("account_number") };
+      break;
+
+    case "allTransactions":
+      url = "/transactions/all";
+      body = {
+        start_date: val("start_date"),
+        end_date: val("end_date")
+      };
+      break;
+
+    case "cumulative":
+      url = "/transactions/cumulative";
+      break;
+
+    case "cumulativeRange":
+      url = "/transactions/cumulative-range";
+      body = {
+        start_date: val("start_date"),
+        end_date: val("end_date")
+      };
+      break;
+
+    case "byReference":
+      url = "/transactions/reference";
+      body = { reference: val("reference") };
+      break;
+
+    default:
+      alert("Select API");
+      return;
+  }
+
+  //body.api_key = apiKey;
+
+  try {
+    const res = await fetch(BASE_URL + url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey
+      },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    // Show JSON
+    document.getElementById("jsonOutput").textContent = JSON.stringify(data, null, 2);
+
+    // Convert to table
+    renderTable(data);
+
+  } catch (err) {
+    console.error(err);
+    alert("Request failed");
+  }
+}
+
+function clearOutput(){
+    // clear JSON
+    document.getElementById("jsonOutput").textContent = null;
+
+    // clear table
+    renderTable(null)
+
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : null;
+}
+
+function renderTable(data) {
+  const container = document.getElementById("tableOutput");
+  container.innerHTML = "";
+
+  if (!data) return;
+
+  let arr = [];
+
+  // normalize
+  if (Array.isArray(data)) {
+    arr = data;
+  } else if (Array.isArray(data.data)) {
+    arr = data.data;
+  } else {
+    arr = [data];
+  }
+
+  if (!arr.length) {
+    container.innerHTML = "<p>No data</p>";
+    return;
+  }
+
+  const table = document.createElement("table");
+
+  const headers = Object.keys(arr[0]);
+  const thead = document.createElement("tr");
+
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    thead.appendChild(th);
+  });
+
+  table.appendChild(thead);
+
+  arr.forEach(row => {
+    const tr = document.createElement("tr");
+
+    headers.forEach(h => {
+      const td = document.createElement("td");
+
+      let val = row[h];
+      if (typeof val === "object") {
+        val = JSON.stringify(val);
+      }
+
+      td.textContent = val ?? "";
+      tr.appendChild(td);
+    });
+
+    table.appendChild(tr);
+  });
+
+  container.appendChild(table);
+}
+</script>
+
+</body>
+</html>
