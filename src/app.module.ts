@@ -15,7 +15,7 @@ import { PaymentsModule } from './payments/payments.module';
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
         host: config.get('DB_HOST'),
-        port: 3306,
+        port: config.get('DB_PORT'),
         username: config.get('DB_USER'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
