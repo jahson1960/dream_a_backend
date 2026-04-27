@@ -8,7 +8,7 @@ import { PaymentsModule } from './payments/payments.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      //envFilePath: '.env',
     }),
 
     TypeOrmModule.forRootAsync({
