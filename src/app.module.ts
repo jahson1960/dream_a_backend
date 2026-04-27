@@ -14,14 +14,11 @@ import { PaymentsModule } from './payments/payments.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: 'localhost', //config.get('DB_HOST'),
+        host: config.get('DB_HOST'),
         port: 3306,
-        //username: config.get('DB_USER'),
-        username: config.get('u223416832_dream_info2'),
-        //password: config.get('DB_PASS'),
-        password: config.get('@Feedback3$'),
-        //database: config.get('DB_NAME'),
-        database: config.get('u223416832_dream_account2'),
+        username: config.get('DB_USER'),
+        password: config.get('DB_PASSWORD'),
+        database: config.get('DB_NAME'),
         autoLoadEntities: true,
         synchronize: false, // ⚠️ production safe
       }),
