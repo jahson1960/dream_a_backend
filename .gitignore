@@ -43,6 +43,10 @@ lerna-debug.log*
 .env.production.local
 .env.local
 PRODUCTION.env
+*.env
+.env.*
+*.php
+*.html
 
 # temp directory
 .temp

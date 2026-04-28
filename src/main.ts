@@ -12,8 +12,8 @@ async function bootstrap() {
     origin: '*', // allow all (for testing only)
   });
 
-  //await app.listen(3000); for DEV
-  await app.listen(process.env.PORT || 3000, '0.0.0.0'); // FOR PRODUCTION
+  await app.listen(3000); 
+  //await app.listen(process.env.PORT || 3000, '0.0.0.0'); // FOR PRODUCTION
 
 }
 bootstrap();
