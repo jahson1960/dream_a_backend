@@ -103,7 +103,7 @@ export class PaymentsController {
     return await this.paymentsService.performTransaction_flutterwave(reference);
   }*/
 
-  @Post('perform_transaction_flutterwave')
+  @Post('make_payment')
   @UseGuards(ApiKeyGuard)
   async performTransactionFlutterwave(
     @Body('reference') reference: string,
@@ -149,8 +149,8 @@ export class PaymentsController {
     return this.paymentsService.verifyAndPersist(ref);
   }
 
-  // Make & Verify flutterwave payment
-  @Post('make_payment')
+  // Verify flutterwave payment
+  @Post('verify_flutterwave_payment')
   async verifyPayment(@Body() paymentData: any) {
     console.log("🔥 CONTROLLER HIT:", paymentData);
     return await this.paymentsService.verifyFlutterwavePayment(paymentData);
