@@ -149,8 +149,8 @@ export class PaymentsController {
     return this.paymentsService.verifyAndPersist(ref);
   }
 
-  // Verify flutterwave payment
-  @Post('verify_flutterwave_payment')
+  // Make & Verify flutterwave payment
+  @Post('make_payment')
   async verifyPayment(@Body() paymentData: any) {
     console.log("🔥 CONTROLLER HIT:", paymentData);
     return await this.paymentsService.verifyFlutterwavePayment(paymentData);
