@@ -617,7 +617,7 @@ export class PaymentsService {
     const rows = await this.dataSource.query(
       `SELECT SUM(amount) as total 
       FROM transactions 
-      WHERE account_number = ? AND status = 'success'`,
+      WHERE account_number = ? AND status = 'successful'`,
       [account_number],
     );
 
@@ -645,7 +645,7 @@ export class PaymentsService {
     const rows = await this.dataSource.query(
       `SELECT SUM(amount) as total 
       FROM transactions 
-      WHERE status = 'success'`,
+      WHERE status = 'successful'`,
     );
 
     return {
@@ -657,7 +657,7 @@ export class PaymentsService {
     const rows = await this.dataSource.query(
       `SELECT SUM(amount) as total 
       FROM transactions 
-      WHERE status = 'success'
+      WHERE status = 'successful'
       AND transaction_date BETWEEN ? AND ? + INTERVAL 1 DAY`,
       [start_date, end_date],
     );
