@@ -41,7 +41,7 @@ async listClients(@Body() body: { limit?: number; offset?: number }) {
   @Post('search/account')
   @UseGuards(ApiKeyGuard)
   async findByAccountNumber(
-    @Body() account_number: string,
+    @Body('account_number') account_number: string
   ) {
     return this.service.findByAccountNumber(account_number);
   }
@@ -52,7 +52,7 @@ async listClients(@Body() body: { limit?: number; offset?: number }) {
   @Post('search/email')
   @UseGuards(ApiKeyGuard)
   async findByEmail(
-    @Body() email: string,
+    @Body('email') email: string
   ) {
     return this.service.findByEmail(email);
   }
@@ -63,7 +63,7 @@ async listClients(@Body() body: { limit?: number; offset?: number }) {
   @Post('search/username')
   @UseGuards(ApiKeyGuard)
   async findByUsername(
-    @Body() username: string,
+    @Body('username') username: string,
   ) {
     return this.service.findByUsername(username);
   }
@@ -74,7 +74,7 @@ async listClients(@Body() body: { limit?: number; offset?: number }) {
   @Post('search/lastname')
   @UseGuards(ApiKeyGuard)
   async findByLastName(
-    @Body() last_name: string,
+    @Body('last_name') last_name: string,
   ) {
     return this.service.findByLastName(last_name);
   }
