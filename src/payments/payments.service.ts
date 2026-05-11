@@ -763,8 +763,9 @@ export class PaymentsService {
           name: trx.name,
         },
         customizations: {
-          title: "My Store",
-          description: "Payment",
+          title: "Refuge Dream Account Deposit",
+          description: `${trx.name}'s Dream Wallet`,
+          logo: "https://refugebank.com.ng/wp-content/uploads/2024/03/refuge-icon.png"
         },
       },
     };
